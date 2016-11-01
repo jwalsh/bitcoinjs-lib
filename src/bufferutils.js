@@ -1,16 +1,19 @@
 var opcodes = require('./opcodes.json')
 var varuint = require('varuint-bitcoin')
 
+/* eslint-disable no-nested-ternary */
 function pushDataSize (i) {
   return i < opcodes.OP_PUSHDATA1 ? 1
   : i <= 0xff ? 2
   : i <= 0xffff ? 3
   : 5
 }
+/* eslint-enable no-nested-ternary */
 
 function readPushDataInt (buffer, offset) {
   var opcode = buffer.readUInt8(offset)
-  var number, size
+  var number
+  var size
 
   // ~6 bit
   if (opcode < opcodes.OP_PUSHDATA1) {

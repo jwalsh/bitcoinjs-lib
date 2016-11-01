@@ -7,8 +7,10 @@ var OPS = require('./opcodes.json')
 var REVERSE_OPS = (function () {
   var result = {}
   for (var op in OPS) {
-    var code = OPS[op]
-    result[code] = op
+    if ({}.hasOwnProperty.call(OPS, op)) {
+      var code = OPS[op]
+      result[code] = op
+    }
   }
   return result
 })()
@@ -136,14 +138,14 @@ function isCanonicalPubKey (buffer) {
   if (buffer.length < 33) return false
 
   switch (buffer[0]) {
-    case 0x02:
-    case 0x03:
-      return buffer.length === 33
-    case 0x04:
-      return buffer.length === 65
+  case 0x02:
+  case 0x03:
+    return buffer.length === 33
+  case 0x04:
+    return buffer.length === 65
+  default:
+    return false
   }
-
-  return false
 }
 
 function isDefinedHashType (hashType) {

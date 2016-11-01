@@ -85,7 +85,9 @@ function sign (hash, d) {
   var n = secp256k1.n
   var G = secp256k1.G
 
-  var r, s
+  var r
+  var s
+
   deterministicGenerateK(hash, x, function (k) {
     var Q = G.multiply(k)
 

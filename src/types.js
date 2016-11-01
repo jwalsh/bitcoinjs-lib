@@ -1,3 +1,5 @@
+/* eslint new-cap: "off" */
+
 var typeforce = require('typeforce')
 
 var UINT31_MAX = Math.pow(2, 31) - 1
@@ -47,7 +49,9 @@ var types = {
 }
 
 for (var typeName in typeforce) {
-  types[typeName] = typeforce[typeName]
+  if ({}.hasOwnProperty.call(typeforce, typeName)) {
+    types[typeName] = typeforce[typeName]
+  }
 }
 
 module.exports = types

@@ -16,7 +16,9 @@ var Transaction = require('./transaction')
 function expandInput (scriptSig, redeemScript) {
   var scriptSigChunks = bscript.decompile(scriptSig)
   var prevOutType = bscript.classifyInput(scriptSigChunks, true)
-  var pubKeys, signatures, prevOutScript
+  var pubKeys
+  var signatures
+  var prevOutScript
 
   switch (prevOutType) {
     case 'scripthash':
@@ -58,7 +60,9 @@ function expandInput (scriptSig, redeemScript) {
       signatures = scriptSigChunks.slice(1).map(function (chunk) {
         return chunk === ops.OP_0 ? undefined : chunk
       })
-      break
+    break
+  default:
+    throw new Error('Unknown output type')
   }
 
   return {
@@ -76,7 +80,7 @@ function fixMultisigOrder (input, transaction, vin) {
 
   var unmatched = input.signatures.concat()
 
-  input.signatures = input.pubKeys.map(function (pubKey, y) {
+  input.signatures = input.pubKeys.map(function (pubKey) {
     var keyPair = ECPair.fromPublicKeyBuffer(pubKey)
     var match
 
@@ -214,7 +218,7 @@ function buildInput (input, allowIncomplete) {
       }
 
       scriptSig = bscript.multisigInput(signatures, allowIncomplete ? undefined : input.redeemScript)
-      break
+    break
 
     default: return
   }
@@ -224,7 +228,9 @@ function buildInput (input, allowIncomplete) {
     scriptSig = bscript.scriptHashInput(scriptSig, input.redeemScript)
   }
 
+  /* eslint-disable consistent-return */
   return scriptSig
+  /* eslint-enable consistent-return */
 }
 
 function TransactionBuilder (network) {
@@ -459,6 +465,7 @@ TransactionBuilder.prototype.__canModifyOutputs = function () {
   var nInputs = this.tx.ins.length
   var nOutputs = this.tx.outs.length
 
+  /* eslint-disable consistent-return */
   return this.inputs.every(function (input) {
     if (input.signatures === undefined) return true
 
@@ -476,6 +483,7 @@ TransactionBuilder.prototype.__canModifyOutputs = function () {
       }
     })
   })
+  /* eslint-enable consistent-return */
 }
 
 module.exports = TransactionBuilder

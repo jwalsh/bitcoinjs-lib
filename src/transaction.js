@@ -109,9 +109,11 @@ Transaction.prototype.addInput = function (hash, index, sequence, scriptSig) {
     types.maybe(types.Buffer)
   ), arguments)
 
+  /* eslint-disable new-cap */
   if (types.Null(sequence)) {
     sequence = Transaction.DEFAULT_SEQUENCE
   }
+  /* eslint-enable new-cap */
 
   // Add the input and return the input's index
   return (this.ins.push({
@@ -186,6 +188,10 @@ var BLANK_OUTPUT = {
  * This method copies the transaction, makes the necessary changes based on the
  * hashType, and then hashes the result.
  * This hash can then be used to sign the provided transaction input.
+ * @param {number} inIndex UInt32
+ * @param {object} prevOutScript Buffer
+ * @param {number} hashType UInt8
+ * @return {string} hash256
  */
 Transaction.prototype.hashForSignature = function (inIndex, prevOutScript, hashType) {
   typeforce(types.tuple(types.UInt32, types.Buffer, /* types.UInt8 */ types.Number), arguments)
@@ -220,8 +226,8 @@ Transaction.prototype.hashForSignature = function (inIndex, prevOutScript, hashT
     txTmp.outs.length = inIndex + 1
 
     // "blank" outputs before
-    for (var i = 0; i < inIndex; i++) {
-      txTmp.outs[i] = BLANK_OUTPUT
+    for (var j = 0; j < inIndex; j++) {
+      txTmp.outs[j] = BLANK_OUTPUT
     }
 
     // ignore sequence numbers (except at inIndex)

@@ -147,7 +147,7 @@ Block.calculateTarget = function (bits) {
 
 Block.calculateMerkleRoot = function (transactions) {
   typeforce([{ getHash: types.Function }], transactions)
-  if (transactions.length === 0) throw TypeError('Cannot compute merkle root for zero transactions')
+  if (transactions.length === 0) throw new TypeError('Cannot compute merkle root for zero transactions')
 
   var hashes = transactions.map(function (transaction) {
     return transaction.getHash()

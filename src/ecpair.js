@@ -57,30 +57,30 @@ ECPair.fromPublicKeyBuffer = function (buffer, network) {
   })
 }
 
-ECPair.fromWIF = function (string, network) {
+ECPair.fromWIF = function (string, ecnetwork) {
   var decoded = wif.decode(string)
   var version = decoded.version
 
-  // [network, ...]
-  if (types.Array(network)) {
-    network = network.filter(function (network) {
-      return version === network.wif
+  // [ecnetwork, ...]
+  if (types.Array(ecnetwork)) {
+    ecnetwork = ecnetwork.filter(function (_network) {
+      return version === _network.wif
     }).pop()
 
-    if (!network) throw new Error('Unknown network version')
+    if (!ecnetwork) throw new Error('Unknown ecnetwork version')
 
-  // network
+  // ecnetwork
   } else {
-    network = network || NETWORKS.bitcoin
+    ecnetwork = ecnetwork || NETWORKS.bitcoin
 
-    if (version !== network.wif) throw new Error('Invalid network version')
+    if (version !== ecnetwork.wif) throw new Error('Invalid ecnetwork version')
   }
 
   var d = BigInteger.fromBuffer(decoded.privateKey)
 
   return new ECPair(d, null, {
     compressed: decoded.compressed,
-    network: network
+    network: ecnetwork
   })
 }
 

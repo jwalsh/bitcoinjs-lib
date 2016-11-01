@@ -31,6 +31,7 @@ function decode (buffer, maxLength, minimal) {
   return result
 }
 
+/* eslint-disable no-nested-ternary */
 function scriptNumSize (i) {
   return i > 0x7fffffff ? 5
   : i > 0x7fffff ? 4
@@ -39,6 +40,7 @@ function scriptNumSize (i) {
   : i > 0x00 ? 1
   : 0
 }
+/* eslint-enable no-nested-ternary */
 
 function encode (number) {
   var value = Math.abs(number)

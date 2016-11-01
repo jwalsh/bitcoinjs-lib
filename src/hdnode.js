@@ -57,24 +57,24 @@ HDNode.fromBase58 = function (string, networks) {
 
   // 4 bytes: version bytes
   var version = buffer.readUInt32BE(0)
-  var network
+  var b58network
 
   // list of networks?
   if (Array.isArray(networks)) {
-    network = networks.filter(function (network) {
-      return version === network.bip32.private ||
-             version === network.bip32.public
+    b58network = networks.filter(function (_network) {
+      return version === _network.bip32.private ||
+             version === _network.bip32.public
     }).pop()
 
-    if (!network) throw new Error('Unknown network version')
+    if (!b58network) throw new Error('Unknown b58network version')
 
-  // otherwise, assume a network object (or default to bitcoin)
+  // otherwise, assume a b58network object (or default to bitcoin)
   } else {
-    network = networks || NETWORKS.bitcoin
+    b58network = networks || NETWORKS.bitcoin
   }
 
-  if (version !== network.bip32.private &&
-    version !== network.bip32.public) throw new Error('Invalid network version')
+  if (version !== b58network.bip32.private &&
+    version !== b58network.bip32.public) throw new Error('Invalid b58network version')
 
   // 1 byte: depth: 0x00 for master nodes, 0x01 for level-1 descendants, ...
   var depth = buffer[4]
@@ -95,11 +95,11 @@ HDNode.fromBase58 = function (string, networks) {
   var keyPair
 
   // 33 bytes: private key data (0x00 + k)
-  if (version === network.bip32.private) {
+  if (version === b58network.bip32.private) {
     if (buffer.readUInt8(45) !== 0x00) throw new Error('Invalid private key')
 
     var d = BigInteger.fromBuffer(buffer.slice(46, 78))
-    keyPair = new ECPair(d, null, { network: network })
+    keyPair = new ECPair(d, null, { network: b58network })
 
   // 33 bytes: public key data (0x02 + X or 0x03 + X)
   } else {
@@ -110,7 +110,7 @@ HDNode.fromBase58 = function (string, networks) {
     // If not, the extended public key is invalid.
     curve.validate(Q)
 
-    keyPair = new ECPair(null, Q, { network: network })
+    keyPair = new ECPair(null, Q, { network: b58network })
   }
 
   var hd = new HDNode(keyPair, chainCode)
@@ -300,6 +300,7 @@ HDNode.prototype.derivePath = function (path) {
     splitPath = splitPath.slice(1)
   }
 
+  /* eslint-disable no-else-return */
   return splitPath.reduce(function (prevHd, indexStr) {
     var index
     if (indexStr.slice(-1) === "'") {
@@ -310,6 +311,7 @@ HDNode.prototype.derivePath = function (path) {
       return prevHd.derive(index)
     }
   }, this)
+  /* eslint-enable no-else-return */
 }
 
 module.exports = HDNode
