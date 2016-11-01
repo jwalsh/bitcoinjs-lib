@@ -10,19 +10,9 @@
   },
   "extends": "eslint-config-airbnb-es5",
   "rules": {
-    "semi": "off",
-    "consistent-return": "off",
-    "default-case": "off",
-    "guard-for-in": "off",
     "indent": "off",
-    "new-cap": "off",
-    "no-else-return": "off",
-    "no-nested-ternary": "off",
     "no-param-reassign": "off",
-    "no-shadow": "off",
-    "no-unused-vars": "off",
-    "one-var": "off",
-    "space-before-function-paren": "off",
-    "valid-jsdoc": "off"
+    "semi": "off",
+    "space-before-function-paren": "off"
   }
 }
